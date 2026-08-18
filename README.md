@@ -1,15 +1,16 @@
-# 🧬 Automated Clinical Trial Information Extractor & Disease Cluster ML Engine
-> **Patent US20250252261A1 Implementation**: Multi-Task Learning Architecture for Biomedical NLP (NER • Relation Extraction • Assertion Detection • K-Means Disease Clustering)
+# 🧬 Automated Clinical Trial Information Extractor & Knowledge Graph Engine
+
+> **Patent US20250252261A1 Implementation**: Multi-Task Learning Architecture for Biomedical NLP (NER • Relation Extraction • Assertion Detection • BERTopic Clustering • Knowledge Graph)
 
 ---
 
 ## 📌 Overview
 
-Medical literature on **PubMed** grows by thousands of clinical trial abstracts daily. Manually reading these papers to extract target diseases, drug interventions, patient cohort sizes ($N$), and statistical outcomes takes hundreds of hours.
+Medical literature on **PubMed** grows by thousands of clinical trial abstracts daily. Manually reading these papers to extract target diseases, drug interventions, patient cohort sizes ($N$), primary endpoints, and statistical outcomes takes hundreds of hours.
 
-This project implements **Patent US20250252261A1**, providing an automated Multi-Task Learning (MTL) system and interactive web platform that ingests unstructured PubMed abstracts and transforms them into structured, relational biomedical knowledge stored in an indexed **SQLite database** (`clinical_trials.db`).
+This project implements **Patent US20250252261A1**, providing an automated Multi-Task Learning (MTL) system and interactive web platform that ingests unstructured PubMed abstracts and transforms them into structured, relational biomedical knowledge stored in a **NetworkX Knowledge Graph** and indexed **SQLite database** (`clinical_trials.db`).
 
-Furthermore, it features a **K-Means Machine Learning Clustering Engine** with **$L_2$ Regularization**, **USML Anomaly Detection**, and **SVML Decision Alignment Scoring** to automatically detect disease clusters across patient populations.
+The platform features a state-of-the-art **BERTopic Machine Learning Clustering Engine** (Dense Sentence Embeddings + UMAP + HDBSCAN + c-TF-IDF) alongside a **Property Knowledge Graph Engine** capable of executing **multi-hop semantic queries** across drug-disease-endpoint pathways.
 
 ---
 
@@ -24,37 +25,37 @@ Processes clinical abstracts across 3 simultaneous NLP heads:
   - `ABSENT_NEGATED`: Lack of statistical significance / failed primary endpoint ($P > 0.05$).
   - `CONDITIONAL`: Efficacy findings conditional on trial subgroup.
 
-### 2. 🧠 K-Means ML Disease Cluster Trainer & Patient Group Classifier
-- **TF-IDF Feature Vectorization**: Weighted term-document frequency matrix combined with log-scaled patient sample sizes ($\log_{10}(N) / 4.0$).
-- **Unsupervised K-Means ($K=5$)**: Segments patient groups into 5 disease clusters:
-  - `CLUSTER-CMD`: Cardiometabolic & Vascular (Heart Failure, Hypertension, Diabetes)
-  - `CLUSTER-ONC`: Oncology & Tumor Burden (NSCLC, Triple-Negative Breast Cancer)
-  - `CLUSTER-NEURO`: Neurodegenerative & Cognitive (Alzheimer's Disease)
-  - `CLUSTER-INFECT`: Respiratory & Infectious (COVID-19 Pneumonia)
-  - `CLUSTER-NEPHRO`: Nephrology & Inflammatory Organ (CKD, Rheumatoid Arthritis, NASH)
-- **PCA 2D Dimensionality Reduction**: Projects high-dimensional feature vectors into 2D coordinates ($PC_1, PC_2$) rendered on an interactive scatterplot.
+### 2. ⚡ BERTopic ML Clustering Engine
+- **Dense Contextual Embeddings**: Uses `sentence-transformers/all-MiniLM-L6-v2` to project clinical abstracts into a 384-dimensional dense semantic vector space.
+- **Non-Linear Dimensionality Reduction (UMAP)**: Applies UMAP (`n_neighbors=15`, `n_components=5`, `metric='cosine'`) to preserve semantic manifolds.
+- **Density-Based Clustering (HDBSCAN)**: Automatically discovers variable disease clusters without hardcoding $K$ (`min_cluster_size=5`, `min_samples=3`).
+- **Native Anomaly Detection**: Maps HDBSCAN noise points (Cluster ID `-1`) directly to outlier probabilities, replacing arbitrary distance thresholds.
+- **c-TF-IDF Topic Keywords**: Class-based TF-IDF dynamically extracts top representative disease biomarkers and clinical keyword profiles per cluster.
 
-### 3. 🛡️ Overfitting Prevention & Diagnostic Metrics
-- **80/20 Train-Validation Holdout Split**: Evaluates out-of-sample loss gap ($\Delta = |E_{\text{val}} - E_{\text{train}}|$).
-- **$L_2$ Regularization Penalty ($\lambda = 0.05$)**: Prevents overfitting to noisy vocabulary quirks via L2 weight decay.
-- **USML Anomaly Detection**: Identifies out-of-distribution rare diseases or conflicting multi-system symptom profiles.
-- **SVML Decision Alignment Score**: Softmax hyperplane alignment scoring ($0-100\%$).
+### 3. 🕸️ Property Knowledge Graph & Multi-Hop Query Engine
+- **Node Types**: `:Trial`, `:Disease`, `:Drug`, `:Endpoint`, `:Cluster`
+- **Relationship Types**: `TREATS`, `TESTED_IN_COHORT`, `EVALUATES_ENDPOINT`, `BELONGS_TO_CLUSTER`
+- **Multi-Hop Traversal**: Executes BFS graph traversals (`query_multi_hop_relations`) to discover multi-step pathways (e.g., *Find all diseases sharing therapeutic drugs or endpoints*).
+- **Cypher Export**: Generates Neo4j-compatible `CREATE` statements for enterprise graph integration.
 
-### 4. 🗄️ SQLite Relational Database & Multi-Format Exports
-- Indexed relational table storing trial metadata, disease entities, cohort $N$, and assertion statuses.
-- **1-Click Exporters**: Export full dataset to `.SQL` dump, `.CSV` spreadsheet, or `.JSON`.
+### 4. 🔄 Graceful In-Browser Fallback Engine
+- If the Python backend is offline, the React frontend seamlessly falls back to an in-browser **TF-IDF + K-Means ($K=5$) Engine** with $L_2$ regularization penalty ($\lambda = 0.05$).
+- Live UI status badge indicates whether the system is connected to the **`[⚡ BERTopic Engine]`** or running in **`[🔧 Legacy K-Means]`** fallback mode.
 
-### 5. 🎨 Bold Tactical Industrial Web UI
-- Built with React, Vite, Tailwind CSS, and Chart.js.
-- Dark slate design (`#020617`), glowing card overlays, monospaced data badges, and hover tooltips.
+### 5. 🗄️ Relational Database & Multi-Format Exporters
+- Export trial records and extracted triples to **`.SQL`** dumps, **`.CSV`** spreadsheets, **`.JSON`**, or **`.CYPHER`** graph scripts.
+
+### 6. 🎨 Crisp White / Slate Light Theme UI
+- Modern, high-contrast light interface built with React, Vite, and Tailwind CSS.
+- Features smooth sliding container tab navigation, interactive scatterplots, and live confidence tuning sliders.
 
 ---
 
 ## 🛠️ Technology Stack
 
 - **Frontend**: React 18, Vite 5, Tailwind CSS 3, Chart.js, Lucide Icons
-- **Backend / NLP**: Python 3, Regex Biomedical Extractors, SQLite 3
-- **Machine Learning**: Unsupervised K-Means ($K=5$), TF-IDF Vectorizer, PCA 2D Projection, Softmax Classifier
+- **Python Backend**: FastAPI, Uvicorn, BERTopic, Sentence-Transformers (`all-MiniLM-L6-v2`), UMAP-learn, HDBSCAN, NetworkX, Scikit-Learn
+- **Databases**: NetworkX Property Graph (`knowledge_graph.json`), SQLite 3 (`clinical_trials.db`), Neo4j Cypher export
 
 ---
 
@@ -62,24 +63,31 @@ Processes clinical abstracts across 3 simultaneous NLP heads:
 
 ### Prerequisites
 - Node.js (v18+) & `npm`
-- Python (v3.8+)
+- Python (v3.8+) & `pip`
 
-### 1. Install Dependencies
+### 1. Frontend Web App Setup
 ```bash
+# Install frontend dependencies
 npm install
-```
 
-### 2. Start the Local Web Application
-```bash
+# Start local React development server
 npm run dev
 ```
 The application will launch locally at **`http://localhost:3000/`**.
 
-### 3. (Optional) Run the Python Backend CLI Extractor
-Populate or update the SQLite database (`clinical_trials.db`) directly via CLI:
+### 2. Python Backend & BERTopic Setup
 ```bash
-python clinical_extractor.py
+# Install backend Python dependencies
+cd backend
+pip install -r requirements.txt
+
+# Run the migration script (re-cluster SQLite data -> build Knowledge Graph)
+python migrate.py
+
+# Start the FastAPI backend server
+python server.py
 ```
+The backend API server will run at **`http://localhost:8000/`**.
 
 ---
 
@@ -87,29 +95,47 @@ python clinical_extractor.py
 
 ```
 d:\sih\
+├── backend/                      # Python BERTopic & Knowledge Graph Service
+│   ├── bertopic_engine.py        # Embeddings + UMAP + HDBSCAN + c-TF-IDF Pipeline
+│   ├── graph_db.py               # NetworkX Property Graph & Multi-Hop Query Engine
+│   ├── server.py                 # FastAPI REST Endpoints (/api/cluster, /api/graph)
+│   ├── migrate.py                # SQLite -> BERTopic -> Knowledge Graph Migration
+│   └── requirements.txt          # Python Backend Package Dependencies
 ├── clinical_extractor.py         # Python CLI Extractor & SQLite DB Builder
-├── clinical_trials.db            # SQLite Relational Database (10 Disease Cohorts)
+├── clinical_trials.db            # SQLite Relational Database
+├── BERTOPIC_EXPLANATION.txt      # Plain-Language Explanation of BERTopic & Graph DB
+├── HOW_IT_WORKS.txt              # Simple Plain-Language System Architecture Guide
+├── SOLUTION_EXPLANATION.txt      # Technical Deep Dive Document
 ├── index.html                    # HTML Document Root
 ├── package.json                  # NPM Project Dependencies & Scripts
 ├── tailwind.config.js            # Tailwind CSS Configuration
 ├── vite.config.js                # Vite Server Configuration
 └── src/
-    ├── App.jsx                   # Main React Application & Tab Navigation
-    ├── index.css                 # Tactical Dark Theme Styling & Grid Pattern
-    ├── main.jsx                  # React DOM Entry Point
+    ├── App.jsx                   # React App & Sliding Tab Wrapper
+    ├── index.css                 # Crisp White Light Theme Styling
+    ├── main.jsx                  # React Entry Point
     ├── components/
-    │   ├── Navbar.jsx            # Top Navigation Header & Patent Badge
-    │   ├── PubMedSearch.jsx      # Live NCBI PubMed API Search & Custom Reader
-    │   ├── MultiTaskViewer.jsx   # Patent US20250252261A1 Entity & Relation Inspector
-    │   ├── DatabaseGrid.jsx      # SQLite Database Table & CSV/JSON/SQL Exporter
-    │   ├── AnalyticsDashboard.jsx# Cohort Metrics, Histograms & Assertion Charts
-    │   └── DiseaseClusterTrainer.jsx # ML K-Means Trainer, PCA Scatterplot & Predictor
+    │   ├── Navbar.jsx            # Header Bar & Engine Status Badge
+    │   ├── PubMedSearch.jsx      # NCBI PubMed API Search & Extractor
+    │   ├── MultiTaskViewer.jsx   # Entity, Relation & Assertion Inspector
+    │   ├── DatabaseGrid.jsx      # Database Table & Multi-Format Exporter
+    │   ├── AnalyticsDashboard.jsx# Metrics, Histograms & Assertion Charts
+    │   └── DiseaseClusterTrainer.jsx # BERTopic / K-Means ML Trainer & Predictor
     └── utils/
+        ├── bertopicClient.js     # API Client for Python Backend with K-Means Fallback
         ├── multiTaskExtractor.js # JavaScript Multi-Task NLP Engine
-        ├── mlClusterTrainer.js   # K-Means, TF-IDF, PCA & USML/SVML Predictor
+        ├── mlClusterTrainer.js   # Legacy In-Browser K-Means & TF-IDF Engine
         ├── pubmedApi.js          # NCBI PubMed E-Utilities API Client
-        └── sqliteExport.js       # CSV, JSON & SQL Export Handlers
+        └── sqliteExport.js       # SQL, CSV, JSON & Cypher Graph Exporters
 ```
+
+---
+
+## 📜 Plain-Language Explanation Guides
+
+- **`BERTOPIC_EXPLANATION.txt`**: Explains BERTopic, UMAP, HDBSCAN, c-TF-IDF, and Knowledge Graphs in simple terms.
+- **`HOW_IT_WORKS.txt`**: Explains how clinical papers are read, extracted, and classified in simple language.
+- **`SOLUTION_EXPLANATION.txt`**: Full technical specification of the Patent US20250252261A1 implementation.
 
 ---
 
