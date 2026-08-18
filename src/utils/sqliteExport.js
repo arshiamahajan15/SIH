@@ -137,6 +137,67 @@ export function exportToSQLiteDB(trials) {
   downloadFile(ddlContent, 'clinical_trials.sql', 'application/sql');
 }
 
+/**
+ * Export Knowledge Graph as Neo4j Cypher CREATE statements.
+ * Generates :Trial, :Disease, :Drug, :Endpoint nodes and
+ * TREATS, TESTED_IN_COHORT, EVALUATES_ENDPOINT relationships.
+ */
+export function exportToGraphCypher(trials) {
+  let cypher = `// ==========================================================\n`;
+  cypher += `// Knowledge Graph — Cypher Export (Neo4j Compatible)\n`;
+  cypher += `// Patent US20250252261A1 Clinical Trial Extractor\n`;
+  cypher += `// Generated: ${new Date().toISOString()}\n`;
+  cypher += `// ==========================================================\n\n`;
+
+  const diseases = new Set();
+  const drugs = new Set();
+
+  trials.forEach(trial => {
+    const pmid = trial.pmid;
+    const title = escapeSql(trial.title);
+    const disease = trial.extracted?.disease || '';
+    const drug = trial.extracted?.intervention || '';
+    const sampleSize = trial.extracted?.sampleSize || 0;
+    const outcome = escapeSql(trial.extracted?.primaryOutcome || '');
+    const assertion = trial.extracted?.assertionStatus || 'PRESENT_POSITIVE';
+    const confidence = (trial.extracted?.overallConfidence || 90) / 100.0;
+
+    // Create Trial node
+    cypher += `CREATE (:Trial {pmid: "${pmid}", title: "${title}", sample_size: ${sampleSize}})\n`;
+
+    // Create Disease node (deduplicated)
+    if (disease && !diseases.has(disease.toLowerCase())) {
+      diseases.add(disease.toLowerCase());
+      cypher += `CREATE (:Disease {name: "${escapeSql(disease)}"})\n`;
+    }
+
+    // Create Drug node (deduplicated)
+    if (drug && !drugs.has(drug.toLowerCase())) {
+      drugs.add(drug.toLowerCase());
+      cypher += `CREATE (:Drug {name: "${escapeSql(drug)}"})\n`;
+    }
+
+    // Create Endpoint node
+    if (outcome) {
+      cypher += `CREATE (:Endpoint {name: "${outcome}"})\n`;
+    }
+
+    // Relationships
+    if (disease) {
+      cypher += `MATCH (t:Trial {pmid: "${pmid}"}), (d:Disease {name: "${escapeSql(disease)}"}) CREATE (t)-[:TESTED_IN_COHORT {sample_size: ${sampleSize}}]->(d)\n`;
+    }
+    if (drug && disease) {
+      cypher += `MATCH (dr:Drug {name: "${escapeSql(drug)}"}), (d:Disease {name: "${escapeSql(disease)}"}) CREATE (dr)-[:TREATS {assertion: "${assertion}", confidence: ${confidence}}]->(d)\n`;
+    }
+    if (outcome) {
+      cypher += `MATCH (t:Trial {pmid: "${pmid}"}), (e:Endpoint {name: "${outcome}"}) CREATE (t)-[:EVALUATES_ENDPOINT]->(e)\n`;
+    }
+    cypher += `\n`;
+  });
+
+  downloadFile(cypher, 'knowledge_graph.cypher', 'text/plain;charset=utf-8;');
+}
+
 function escapeSql(str) {
   if (!str) return '';
   return str.replace(/'/g, "''");

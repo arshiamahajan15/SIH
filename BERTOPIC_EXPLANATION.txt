@@ -1,0 +1,211 @@
+================================================================================
+   BERTOPIC & KNOWLEDGE GRAPH UPGRADE — EXPLAINED IN SIMPLE TERMS
+   How We Upgraded from Basic K-Means to Production-Grade BERTopic
+================================================================================
+
+
+WHAT CHANGED AND WHY?
+--------------------------------------------------------------------------------
+Previously, our system used a basic algorithm called "K-Means" to group
+medical papers into disease categories. It worked, but had limitations:
+
+  OLD WAY (K-Means):
+  - We had to manually decide how many groups to create (always 5).
+  - It counted words like a dictionary — no understanding of meaning.
+  - Anomaly detection used arbitrary distance thresholds we made up.
+  - Data was stored in flat database tables (like an Excel spreadsheet).
+
+  NEW WAY (BERTopic):
+  - The system AUTOMATICALLY discovers how many groups exist.
+  - It UNDERSTANDS the meaning of words, not just counts them.
+  - Anomaly detection is built into the algorithm natively.
+  - Data is stored as a Knowledge Graph (like a web of connections).
+
+
+HOW DOES BERTOPIC WORK? (4 STEPS)
+--------------------------------------------------------------------------------
+
+  STEP 1: UNDERSTAND THE MEANING OF WORDS
+  ------------------------------------------------
+  Instead of just counting words, we use a pre-trained AI language model
+  called "all-MiniLM-L6-v2" (a type of BERT model). This model has already
+  read millions of documents and learned what words MEAN.
+
+  It converts each medical paper into a list of 384 numbers that represent
+  the paper's MEANING — not just which words appear, but what the paper
+  is actually about.
+
+  Think of it like this:
+  - OLD WAY: "This paper contains the word 'heart' 5 times" → [0, 0, 5, 0...]
+  - NEW WAY: "This paper is about cardiovascular treatment outcomes" → [0.23, -0.15, 0.87, ...]
+
+  The new way captures that "heart failure" and "cardiac arrest" are
+  related concepts, even though they use different words.
+
+  STEP 2: SIMPLIFY THE DATA (UMAP)
+  ------------------------------------------------
+  384 numbers per paper is a lot. UMAP (Uniform Manifold Approximation
+  and Projection) squishes those 384 dimensions down to just 5, while
+  keeping papers that are similar close together.
+
+  Imagine you have a cloud of dots in a 384-dimensional space (impossible
+  to visualize). UMAP flattens it into a 5-dimensional space where you
+  can still see which dots are close to each other.
+
+  Settings we use:
+  - n_neighbors=15: Each paper looks at its 15 nearest neighbors
+  - n_components=5: Reduce to 5 dimensions
+  - metric=cosine: Measure similarity by the angle between vectors
+
+  STEP 3: FIND NATURAL GROUPS (HDBSCAN)
+  ------------------------------------------------
+  This is the biggest upgrade. Instead of K-Means (which forces exactly
+  K groups), we use HDBSCAN (Hierarchical Density-Based Spatial Clustering).
+
+  HDBSCAN finds groups by looking for DENSE areas — places where many
+  papers are packed closely together. It has three key advantages:
+
+  1. AUTOMATIC K: It discovers how many groups exist naturally.
+     Maybe there are 3 disease clusters, maybe 7 — HDBSCAN figures
+     it out from the data itself.
+
+  2. NATIVE ANOMALY DETECTION: Papers that don't fit into any dense
+     cluster are automatically labeled as "outliers" (cluster ID = -1).
+     This replaces our old made-up distance thresholds.
+     
+     Old way: "If distance > 1.35, it's an anomaly" (arbitrary number)
+     New way: "HDBSCAN says this paper is noise" (mathematically justified)
+
+  3. VARIABLE DENSITY: Unlike K-Means (which assumes all clusters are
+     round and same-sized), HDBSCAN can find clusters of any shape
+     and size.
+
+  Settings we use:
+  - min_cluster_size=5: A group needs at least 5 papers
+  - min_samples=3: Each core point needs 3 nearby neighbors
+
+  STEP 4: LABEL THE GROUPS (c-TF-IDF)
+  ------------------------------------------------
+  After finding clusters, we need to name them. c-TF-IDF (class-based
+  TF-IDF) looks at all papers in each cluster and finds the words that
+  are most unique and representative of that cluster.
+
+  For example:
+  - Cluster 0 keywords: "heart failure, ejection fraction, semaglutide"
+    → This is a Cardiovascular cluster
+  - Cluster 1 keywords: "nsclc, pembrolizumab, overall survival"
+    → This is an Oncology cluster
+
+  These keywords are extracted automatically — no manual labeling needed.
+
+
+WHAT IS THE KNOWLEDGE GRAPH?
+--------------------------------------------------------------------------------
+Instead of storing data in flat tables (like a spreadsheet), we now store
+it as a GRAPH — a network of connected things.
+
+  OLD WAY (SQLite Table):
+  ┌──────────┬───────────────────┬──────────────┬────────────┐
+  │ PMID     │ Disease           │ Drug         │ Worked?    │
+  ├──────────┼───────────────────┼──────────────┼────────────┤
+  │ 35657801 │ Heart Failure     │ Semaglutide  │ Yes        │
+  │ 34525287 │ NSCLC             │ Pembrolizumab│ Yes        │
+  └──────────┴───────────────────┴──────────────┴────────────┘
+
+  NEW WAY (Knowledge Graph):
+  (Semaglutide) ──[TREATS]──> (Heart Failure)
+       ↑                            ↑
+  (Trial 35657801) ──[TESTED_IN]──┘
+       │
+       └──[EVALUATES]──> (KCCQ Score Improvement)
+       │
+       └──[BELONGS_TO]──> (Cluster: Cardiovascular)
+
+  The graph stores RELATIONSHIPS between things, not just data in columns.
+  This lets us ask powerful questions like:
+
+  "Find all diseases that share a drug with Heart Failure"
+  → Follow: Heart Failure ← TREATS ← Semaglutide → TREATS → ???
+  → Answer: Maybe other GLP-1 related diseases
+
+  This is called a "multi-hop query" — you hop from node to node along
+  the relationship arrows.
+
+
+NODE TYPES IN THE GRAPH:
+  :Trial    — A clinical trial paper (PMID, title, sample size)
+  :Disease  — A disease condition (name, MeSH ID)
+  :Drug     — A therapeutic drug (name, drug class)
+  :Endpoint — A clinical outcome measure (name, p-value)
+  :Cluster  — A BERTopic cluster (ID, keywords, c-TF-IDF scores)
+
+RELATIONSHIP TYPES:
+  TREATS            — A drug treats a disease
+  TESTED_IN_COHORT  — A trial tested patients with a disease
+  EVALUATES_ENDPOINT— A trial measured a specific outcome
+  BELONGS_TO_CLUSTER— A trial belongs to a BERTopic cluster
+
+
+HOW DOES THE FRONTEND CONNECT TO BERTOPIC?
+--------------------------------------------------------------------------------
+BERTopic is a Python library — it can't run in your web browser. So we
+built a Python server (using FastAPI) that runs on your computer:
+
+  Your Browser (React)  ──HTTP requests──>  Python Server (FastAPI)
+     localhost:3000                            localhost:8000
+                                                   │
+                                            ┌──────┴──────┐
+                                            │  BERTopic   │
+                                            │  UMAP       │
+                                            │  HDBSCAN    │
+                                            │  NetworkX   │
+                                            └─────────────┘
+
+If the Python server is not running, the frontend automatically falls
+back to the old K-Means algorithm (which runs in the browser). You'll
+see a badge in the UI showing which engine is active:
+
+  [⚡ BERTopic Engine (UMAP + HDBSCAN)]  — Python backend is online
+  [🔧 Legacy K-Means Engine]             — Fallback mode (no Python)
+
+
+HOW TO RUN THE FULL SYSTEM
+--------------------------------------------------------------------------------
+
+  1. Install Python dependencies:
+     cd backend
+     pip install -r requirements.txt
+
+  2. Run the migration (re-cluster existing data):
+     python backend/migrate.py
+
+  3. Start the Python API server:
+     python backend/server.py
+     → Runs on http://localhost:8000
+
+  4. Start the React frontend (in a separate terminal):
+     npm run dev
+     → Runs on http://localhost:3000
+
+  5. Open http://localhost:3000 → Go to ML Clusters tab
+     → You should see the purple "BERTopic Engine" badge
+
+
+SUMMARY: OLD vs NEW
+--------------------------------------------------------------------------------
+
+  Feature              | OLD (K-Means)         | NEW (BERTopic)
+  ---------------------|-----------------------|-------------------------
+  Word Understanding   | Counts words (TF-IDF) | Understands meaning (BERT)
+  Cluster Count        | Fixed K=5             | Auto-discovered by HDBSCAN
+  Anomaly Detection    | Arbitrary threshold   | Native HDBSCAN outliers
+  Cluster Labels       | Hardcoded names       | c-TF-IDF auto-keywords
+  Data Storage         | Flat SQLite tables    | Knowledge Graph (NetworkX)
+  Queries              | SQL SELECT            | Multi-hop graph traversal
+  Dimensionality       | PCA (linear)          | UMAP (non-linear manifold)
+  Runs In              | Browser (JavaScript)  | Python server (FastAPI)
+  Fallback             | N/A                   | Auto-fallback to K-Means
+
+================================================================================
+   END OF BERTOPIC EXPLANATION
+================================================================================

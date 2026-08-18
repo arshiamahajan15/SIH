@@ -1,0 +1,12 @@
+# BERTopic Clustering Engine & Knowledge Graph Backend
+# Patent US20250252261A1 Implementation
+
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+bertopic>=0.16.0
+sentence-transformers>=2.2.2
+umap-learn>=0.5.4
+hdbscan>=0.8.33
+scikit-learn>=1.3.0
+networkx>=3.2
+numpy>=1.24.0

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Cpu, ScatterChart, Sparkles, Layers, Activity, CheckCircle2, AlertTriangle, Search, ShieldCheck, ArrowRight, RefreshCw, BarChart2 } from 'lucide-react';
+import { Cpu, ScatterChart, Sparkles, Layers, Activity, CheckCircle2, AlertTriangle, Search, ShieldCheck, ArrowRight, RefreshCw, BarChart2, Zap } from 'lucide-react';
 import { trainKMeansModel, predictDiseaseCluster, DISEASE_CLUSTER_PROFILES } from '../utils/mlClusterTrainer';
+import { trainBERTopic, isBackendOnline, predictCluster as bertopicPredict } from '../utils/bertopicClient';
 
 export default function DiseaseClusterTrainer({ trials }) {
   const [model, setModel] = useState(null);
@@ -10,6 +11,7 @@ export default function DiseaseClusterTrainer({ trials }) {
   const [kClusters, setKClusters] = useState(5);
   const [confidenceThreshold, setConfidenceThreshold] = useState(75);
   const [selectedClusterFilter, setSelectedClusterFilter] = useState('ALL');
+  const [engineMode, setEngineMode] = useState('checking'); // 'bertopic' | 'legacy' | 'checking'
 
   // Prediction Form State
   const [predictionInput, setPredictionInput] = useState({
@@ -20,18 +22,31 @@ export default function DiseaseClusterTrainer({ trials }) {
   });
   const [predictionResult, setPredictionResult] = useState(null);
 
-  // Train K-Means Model on component mount or hyperparameter updates
+  // Train model on mount — try BERTopic first, fallback to K-Means
   useEffect(() => {
-    runModelTraining(useL2Regularization, l2Lambda, kClusters);
-  }, [trials, useL2Regularization, l2Lambda, kClusters]);
+    runModelTraining();
+  }, [trials]);
 
-  const runModelTraining = (l2State = useL2Regularization, lambda = l2Lambda, k = kClusters) => {
+  const runModelTraining = async () => {
+    if (!trials || trials.length === 0) return;
     setIsTraining(true);
-    setTimeout(() => {
-      const trained = trainKMeansModel(trials, k, 30, l2State, lambda);
-      setModel(trained);
-      setIsTraining(false);
-    }, 250);
+    setEngineMode('checking');
+
+    try {
+      const result = await trainBERTopic(trials, {
+        kClusters, useL2: useL2Regularization, l2Lambda,
+        minClusterSize: 5, minSamples: 3,
+      });
+      setModel(result);
+      setEngineMode(result.isFallback ? 'legacy' : 'bertopic');
+    } catch (err) {
+      // Absolute fallback
+      const trained = trainKMeansModel(trials, kClusters, 30, useL2Regularization, l2Lambda);
+      setModel({ ...trained, engine: 'Legacy K-Means (Fallback)', isFallback: true });
+      setEngineMode('legacy');
+    }
+
+    setIsTraining(false);
   };
 
   const toggleL2 = () => {
@@ -69,9 +84,15 @@ export default function DiseaseClusterTrainer({ trials }) {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 text-teal-700 border border-slate-200 flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-teal-600" />
-                <span>K-Means Engine v2.4</span>
+              <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-medium border flex items-center gap-1.5 ${
+                engineMode === 'bertopic' 
+                  ? 'bg-violet-50 text-violet-800 border-violet-200' 
+                  : engineMode === 'legacy'
+                  ? 'bg-slate-100 text-teal-700 border-slate-200'
+                  : 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'
+              }`}>
+                {engineMode === 'bertopic' ? <Zap className="w-3.5 h-3.5 text-violet-600" /> : <Cpu className="w-3.5 h-3.5 text-teal-600" />}
+                <span>{engineMode === 'bertopic' ? 'BERTopic Engine (UMAP + HDBSCAN)' : engineMode === 'legacy' ? 'Legacy K-Means Engine' : 'Connecting...'}</span>
               </span>
               
               {/* Overfitting Prevention Status Badge */}

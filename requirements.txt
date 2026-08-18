@@ -1,5 +1,11 @@
 # Clinical Trial Extractor Dependencies
 # Patent US20250252261A1 Implementation
 
+# Core Python extractor
 requests>=2.31.0
 beautifulsoup4>=4.12.0
+
+# BERTopic Clustering Engine & Knowledge Graph Backend
+# Install with: pip install -r backend/requirements.txt
+# Requires: fastapi, uvicorn, bertopic, sentence-transformers,
+#           umap-learn, hdbscan, scikit-learn, networkx
