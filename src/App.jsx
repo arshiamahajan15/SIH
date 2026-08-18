@@ -78,17 +78,13 @@ export default function App() {
   const isSavedInDb = activeTrial ? databaseTrials.some(t => t.pmid === activeTrial.pmid) : false;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-teal-600 selection:text-white">
       
       {/* Toast Notification Floating Banner */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 z-50 animate-bounce">
-          <div className={`px-4 py-3 rounded-2xl shadow-2xl border flex items-center space-x-2.5 text-xs font-medium backdrop-blur-lg ${
-            toastMessage.type === 'success'
-              ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700/80 shadow-emerald-950/50'
-              : 'bg-cyan-950/90 text-cyan-200 border-cyan-700/80 shadow-cyan-950/50'
-          }`}>
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="px-4 py-3 rounded-xl shadow-xl bg-slate-900 text-white border border-slate-800 flex items-center space-x-2.5 text-xs font-medium">
+            <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0" />
             <span>{toastMessage.text}</span>
           </div>
         </div>
@@ -101,56 +97,66 @@ export default function App() {
         totalTrialsCount={databaseTrials.length}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Main Content Area with Smooth Horizontal Sliding View Transitions */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-hidden">
         
-        {/* TAB 1: EXTRACTOR & READER */}
-        {activeTab === 'extractor' && (
-          <div className="space-y-6">
-            <PubMedSearch
-              onSelectTrial={handleSelectTrial}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              onCustomIngest={handleCustomIngest}
-            />
+        <div className="transition-all duration-300 ease-in-out transform">
+          
+          {/* TAB 1: EXTRACTOR & READER */}
+          {activeTab === 'extractor' && (
+            <div className="space-y-6 animate-fadeIn transition-transform duration-300">
+              <PubMedSearch
+                onSelectTrial={handleSelectTrial}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                onCustomIngest={handleCustomIngest}
+              />
 
-            <MultiTaskViewer
-              activeTrial={activeTrial}
-              onSaveToDatabase={handleSaveToDatabase}
-              isSavedInDb={isSavedInDb}
-            />
-          </div>
-        )}
+              <MultiTaskViewer
+                activeTrial={activeTrial}
+                onSaveToDatabase={handleSaveToDatabase}
+                isSavedInDb={isSavedInDb}
+              />
+            </div>
+          )}
 
-        {/* TAB 2: DISEASE CLUSTER ML TRAINER & PREDICTOR */}
-        {activeTab === 'clusterTrainer' && (
-          <DiseaseClusterTrainer trials={databaseTrials} />
-        )}
+          {/* TAB 2: DISEASE CLUSTER ML TRAINER & PREDICTOR */}
+          {activeTab === 'clusterTrainer' && (
+            <div className="animate-fadeIn transition-transform duration-300">
+              <DiseaseClusterTrainer trials={databaseTrials} />
+            </div>
+          )}
 
-        {/* TAB 3: SQLITE DATABASE GRID */}
-        {activeTab === 'database' && (
-          <DatabaseGrid
-            trials={databaseTrials}
-            onDeleteTrial={handleDeleteTrial}
-            onClearAll={handleClearAll}
-          />
-        )}
+          {/* TAB 3: SQLITE DATABASE GRID */}
+          {activeTab === 'database' && (
+            <div className="animate-fadeIn transition-transform duration-300">
+              <DatabaseGrid
+                trials={databaseTrials}
+                onDeleteTrial={handleDeleteTrial}
+                onClearAll={handleClearAll}
+              />
+            </div>
+          )}
 
-        {/* TAB 4: ANALYTICS & INSIGHTS */}
-        {activeTab === 'analytics' && (
-          <AnalyticsDashboard trials={databaseTrials} />
-        )}
+          {/* TAB 4: ANALYTICS & INSIGHTS */}
+          {activeTab === 'analytics' && (
+            <div className="animate-fadeIn transition-transform duration-300">
+              <AnalyticsDashboard trials={databaseTrials} />
+            </div>
+          )}
+
+        </div>
 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
+            <ShieldCheck className="w-4 h-4 text-teal-600" />
             <span>Patent US20250252261A1 Implementation: Multi-Task Learning for NLP Tasks</span>
           </div>
-          <span>Automated Clinical Trial Literature Information Extractor • Built with React & SQLite</span>
+          <span>Automated Clinical Trial Literature Information Extractor • React & SQLite</span>
         </div>
       </footer>
 

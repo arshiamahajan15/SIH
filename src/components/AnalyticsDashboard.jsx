@@ -73,9 +73,11 @@ export default function AnalyticsDashboard({ trials }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#0f172a',
-        borderColor: '#334155',
+        backgroundColor: '#ffffff',
+        borderColor: '#e2e8f0',
         borderWidth: 1,
+        titleColor: '#0f172a',
+        bodyColor: '#334155',
         titleFont: { family: 'Inter', size: 12, weight: 'bold' },
         bodyFont: { family: 'JetBrains Mono', size: 12 },
         callbacks: {
@@ -86,12 +88,12 @@ export default function AnalyticsDashboard({ trials }) {
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }
+        grid: { color: 'rgba(0, 0, 0, 0.05)' },
+        ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
       },
       y: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
+        grid: { color: 'rgba(0, 0, 0, 0.05)' },
+        ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }
       }
     }
   };
@@ -109,9 +111,9 @@ export default function AnalyticsDashboard({ trials }) {
       {
         data: Object.values(assertionCounts),
         backgroundColor: [
-          'rgba(16, 185, 129, 0.75)',
-          'rgba(244, 63, 94, 0.75)',
-          'rgba(245, 158, 11, 0.75)'
+          'rgba(16, 185, 129, 0.85)',
+          'rgba(244, 63, 94, 0.85)',
+          'rgba(245, 158, 11, 0.85)'
         ],
         borderColor: [
           '#10b981',
@@ -128,7 +130,7 @@ export default function AnalyticsDashboard({ trials }) {
     plugins: {
       legend: {
         position: 'bottom',
-        labels: { color: '#cbd5e1', font: { family: 'Inter', size: 11 } }
+        labels: { color: '#334155', font: { family: 'Inter', size: 11 } }
       }
     },
     cutout: '70%'
@@ -141,50 +143,50 @@ export default function AnalyticsDashboard({ trials }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total Trials Processed */}
-        <div className="glass-panel rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+        <div className="glass-panel rounded-xl p-4 border border-slate-200 bg-white flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs text-slate-400 font-medium">Extracted Clinical Trials</p>
-            <h3 className="text-2xl font-bold font-mono text-white mt-1">{trials.length}</h3>
-            <p className="text-[10px] text-cyan-400 mt-0.5">PubMed Papers Processed</p>
+            <p className="text-xs text-slate-500 font-medium">Extracted Clinical Trials</p>
+            <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">{trials.length}</h3>
+            <p className="text-[10px] text-teal-600 mt-0.5">PubMed Papers Processed</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center">
-            <Activity className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center">
+            <Activity className="w-4 h-4" />
           </div>
         </div>
 
         {/* Total Patients Enrolled */}
-        <div className="glass-panel rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+        <div className="glass-panel rounded-xl p-4 border border-slate-200 bg-white flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs text-slate-400 font-medium">Total Patient Cohort (N)</p>
-            <h3 className="text-2xl font-bold font-mono text-amber-300 mt-1">{totalPatientsEnrolled.toLocaleString()}</h3>
-            <p className="text-[10px] text-slate-400 mt-0.5">Avg N = {avgSampleSize.toLocaleString()} / trial</p>
+            <p className="text-xs text-slate-500 font-medium">Total Patient Cohort (N)</p>
+            <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">{totalPatientsEnrolled.toLocaleString()}</h3>
+            <p className="text-[10px] text-slate-500 mt-0.5">Avg N = {avgSampleSize.toLocaleString()} / trial</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-amber-950 text-amber-400 border border-amber-800 flex items-center justify-center">
-            <Users className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center">
+            <Users className="w-4 h-4" />
           </div>
         </div>
 
         {/* Average Multi-Task Confidence */}
-        <div className="glass-panel rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+        <div className="glass-panel rounded-xl p-4 border border-slate-200 bg-white flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs text-slate-400 font-medium">Patent MTL Confidence</p>
-            <h3 className="text-2xl font-bold font-mono text-emerald-400 mt-1">{avgConfidence}%</h3>
-            <p className="text-[10px] text-emerald-400 mt-0.5">US20250252261A1 Model Score</p>
+            <p className="text-xs text-slate-500 font-medium">Patent MTL Confidence</p>
+            <h3 className="text-xl font-bold font-mono text-emerald-700 mt-1">{avgConfidence}%</h3>
+            <p className="text-[10px] text-emerald-600 mt-0.5">US20250252261A1 Score</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
+            <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
 
         {/* Max Trial Cohort Size */}
-        <div className="glass-panel rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+        <div className="glass-panel rounded-xl p-4 border border-slate-200 bg-white flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs text-slate-400 font-medium">Largest Trial Cohort</p>
-            <h3 className="text-2xl font-bold font-mono text-purple-300 mt-1">N = {maxSampleSize.toLocaleString()}</h3>
-            <p className="text-[10px] text-slate-400 mt-0.5">Single RCT Max Enrollment</p>
+            <p className="text-xs text-slate-500 font-medium">Largest Trial Cohort</p>
+            <h3 className="text-xl font-bold font-mono text-indigo-700 mt-1">N = {maxSampleSize.toLocaleString()}</h3>
+            <p className="text-[10px] text-slate-500 mt-0.5">Single RCT Max Enrollment</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-950 text-purple-400 border border-purple-800 flex items-center justify-center">
-            <Award className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center">
+            <Award className="w-4 h-4" />
           </div>
         </div>
 
@@ -194,10 +196,10 @@ export default function AnalyticsDashboard({ trials }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Sample Size Bar Chart (8 cols) */}
-        <div className="lg:col-span-8 glass-panel rounded-2xl p-5 border border-slate-800">
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-amber-400" />
+        <div className="lg:col-span-8 glass-panel rounded-xl p-5 border border-slate-200 bg-white shadow-xs">
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-amber-600" />
               Patient Sample Size (N) Distribution Across Studies
             </h3>
             <span className="text-[10px] font-mono text-slate-400">Histogram</span>
@@ -209,11 +211,11 @@ export default function AnalyticsDashboard({ trials }) {
         </div>
 
         {/* Clinical Assertion Status Doughnut Chart (4 cols) */}
-        <div className="lg:col-span-4 glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
+        <div className="lg:col-span-4 glass-panel rounded-xl p-5 border border-slate-200 bg-white flex flex-col justify-between shadow-xs">
           <div>
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                <PieIcon className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <PieIcon className="w-4 h-4 text-emerald-600" />
                 Task 3: Assertion Polarity
               </h3>
               <span className="text-[10px] font-mono text-slate-400">AD Head</span>
@@ -224,8 +226,8 @@ export default function AnalyticsDashboard({ trials }) {
             </div>
           </div>
 
-          <div className="mt-3 p-2.5 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] text-slate-400 text-center">
-            Patented Assertion Detection classifies outcome findings into Present/Positive, Absent/Negated, or Conditional.
+          <div className="mt-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600 text-center">
+            Assertion Detection classifies outcome findings into Present/Positive, Absent/Negated, or Conditional.
           </div>
         </div>
 
