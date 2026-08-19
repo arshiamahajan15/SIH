@@ -22,10 +22,10 @@ export default function DiseaseClusterTrainer({ trials }) {
   });
   const [predictionResult, setPredictionResult] = useState(null);
 
-  // Train model on mount — try BERTopic first, fallback to K-Means
+  // Train model on mount or hyperparameter slider updates
   useEffect(() => {
     runModelTraining();
-  }, [trials]);
+  }, [trials, useL2Regularization, l2Lambda, kClusters]);
 
   const runModelTraining = async () => {
     if (!trials || trials.length === 0) return;
@@ -40,7 +40,7 @@ export default function DiseaseClusterTrainer({ trials }) {
       setModel(result);
       setEngineMode(result.isFallback ? 'legacy' : 'bertopic');
     } catch (err) {
-      // Absolute fallback
+      // Absolute fallback to legacy K-Means
       const trained = trainKMeansModel(trials, kClusters, 30, useL2Regularization, l2Lambda);
       setModel({ ...trained, engine: 'Legacy K-Means (Fallback)', isFallback: true });
       setEngineMode('legacy');
@@ -50,16 +50,52 @@ export default function DiseaseClusterTrainer({ trials }) {
   };
 
   const toggleL2 = () => {
-    const nextState = !useL2Regularization;
-    setUseL2Regularization(nextState);
-    runModelTraining(nextState, l2Lambda, kClusters);
+    setUseL2Regularization(prev => !prev);
   };
 
-  const handlePredict = (e) => {
-    e.preventDefault();
-    if (!model) return;
-    const result = predictDiseaseCluster(model, predictionInput);
+  const executePrediction = async (inputToPredict = predictionInput) => {
+    if (!inputToPredict) return;
+    
+    if (engineMode === 'bertopic') {
+      try {
+        const res = await bertopicPredict(inputToPredict);
+        if (res && !res.error) {
+          const profile = DISEASE_CLUSTER_PROFILES[res.predictedClusterId] || {
+            name: res.predictedClusterId === -1 ? 'Outlier / Unclustered Disease' : `BERTopic Cluster ${res.predictedClusterId}`,
+            code: res.predictedClusterId === -1 ? 'CLUSTER-OUTLIER' : `CLUSTER-BERT-${res.predictedClusterId}`,
+            color: res.predictedClusterId === -1 ? '#ef4444' : '#8b5cf6',
+            description: res.predictedClusterId === -1 ? 'HDBSCAN identified this cohort as an out-of-distribution anomaly.' : `BERTopic cluster automatically discovered via dense embeddings and UMAP manifold projection.`,
+            keyBiomarkers: res.topKeywords ? res.topKeywords.map(k => k[0]) : ['Biomarker A', 'Biomarker B']
+          };
+
+          setPredictionResult({
+            confidence: res.confidence,
+            isAnomaly: res.isOutlier,
+            usmlStatus: res.hdbscanStatus,
+            anomalyScore: res.outlierScore,
+            profile,
+            svmlScore: Math.round(100 - res.outlierScore),
+            minDistance: Math.round((100 - res.confidence) / 20 * 100) / 100,
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('BERTopic prediction error, using K-Means fallback:', err);
+      }
+    }
+
+    // Fallback: Legacy K-Means prediction
+    let kmeansModel = model;
+    if (!kmeansModel || !kmeansModel.centroids) {
+      kmeansModel = trainKMeansModel(trials, kClusters, 30, useL2Regularization, l2Lambda);
+    }
+    const result = predictDiseaseCluster(kmeansModel, inputToPredict);
     setPredictionResult(result);
+  };
+
+  const handlePredictionSubmit = (e) => {
+    e.preventDefault();
+    executePrediction(predictionInput);
   };
 
   if (!trials || trials.length === 0) {
@@ -72,7 +108,7 @@ export default function DiseaseClusterTrainer({ trials }) {
     );
   }
 
-  const filteredTrials = model?.clusteredTrials.filter(t => 
+  const filteredTrials = model?.clusteredTrials?.filter(t => 
     selectedClusterFilter === 'ALL' || t.clusterId === parseInt(selectedClusterFilter, 10)
   ) || [];
 
@@ -319,7 +355,7 @@ export default function DiseaseClusterTrainer({ trials }) {
               </span>
 
               <div className="relative w-full h-full">
-                {model?.clusteredTrials.map((t, idx) => {
+                {model?.clusteredTrials?.map((t, idx) => {
                   const normX = Math.max(10, Math.min(90, 50 + t.pcaX * 12));
                   const normY = Math.max(10, Math.min(90, 50 - t.pcaY * 12));
                   const profile = DISEASE_CLUSTER_PROFILES[t.clusterId] || DISEASE_CLUSTER_PROFILES[0];
@@ -455,6 +491,7 @@ export default function DiseaseClusterTrainer({ trials }) {
                       notes: 'High complexity autoimmune and renal ambiguity sample'
                     };
                     setPredictionInput(sample);
+                    executePrediction(sample);
                   }}
                   className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer"
                 >
@@ -471,6 +508,7 @@ export default function DiseaseClusterTrainer({ trials }) {
                       notes: 'Oncology and respiratory pulmonary toxicity ambiguity'
                     };
                     setPredictionInput(sample);
+                    executePrediction(sample);
                   }}
                   className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer"
                 >
@@ -487,6 +525,7 @@ export default function DiseaseClusterTrainer({ trials }) {
                       notes: 'Clear standard cardiometabolic cluster benchmark'
                     };
                     setPredictionInput(sample);
+                    executePrediction(sample);
                   }}
                   className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer"
                 >
@@ -504,6 +543,7 @@ export default function DiseaseClusterTrainer({ trials }) {
             </button>
           </form>
 
+          {/* Prediction Result Display (5 cols) */}
           <div className="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-5 flex flex-col justify-between">
             {predictionResult ? (
               <div className="space-y-4">

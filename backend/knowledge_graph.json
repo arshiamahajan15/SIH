@@ -1,0 +1,590 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "Cluster",
+      "cluster_id": 0,
+      "top_keywords": [
+        "patients",
+        "placebo",
+        "cardiovascular",
+        "semaglutide",
+        "group",
+        "mg",
+        "fibrosis",
+        "primary"
+      ],
+      "c_tfidf_scores": [
+        0.0536,
+        0.0467,
+        0.0352,
+        0.0324,
+        0.0315,
+        0.0298,
+        0.0296,
+        0.0276
+      ],
+      "id": "cluster:0"
+    },
+    {
+      "label": "Cluster",
+      "cluster_id": 1,
+      "top_keywords": [
+        "placebo",
+        "patients",
+        "remdesivir",
+        "severe",
+        "double blind",
+        "double",
+        "blind",
+        "95 ci"
+      ],
+      "c_tfidf_scores": [
+        0.0406,
+        0.0399,
+        0.039,
+        0.0355,
+        0.0325,
+        0.0325,
+        0.0325,
+        0.0319
+      ],
+      "id": "cluster:1"
+    },
+    {
+      "label": "Cluster",
+      "cluster_id": -1,
+      "top_keywords": [
+        "outlier"
+      ],
+      "c_tfidf_scores": [
+        1.0
+      ],
+      "id": "cluster:-1"
+    },
+    {
+      "label": "Trial",
+      "pmid": "35657801",
+      "title": "Semaglutide in Patients with Heart Failure with Preserved Ejection Fraction and Obesity",
+      "sample_size": 529,
+      "phase": "Phase III Double-blind",
+      "authors": "Kosiborod MN, Abildstr\u00f8m SZ, Borlaug BA, et al.",
+      "id": "trial:35657801"
+    },
+    {
+      "label": "Disease",
+      "name": "Heart Failure",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:heart failure"
+    },
+    {
+      "label": "Drug",
+      "name": "Semaglutide",
+      "drug_class": "",
+      "id": "drug:semaglutide"
+    },
+    {
+      "label": "Endpoint",
+      "name": "os",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:os"
+    },
+    {
+      "label": "Trial",
+      "pmid": "34525287",
+      "title": "Pembrolizumab plus Chemotherapy in Advanced Non-Small-Cell Lung Cancer",
+      "sample_size": 616,
+      "phase": "PHASE III Double-blind",
+      "authors": "Gandhi L, Rodr\u00edguez-Abreu D, Gadgeel S, et al.",
+      "id": "trial:34525287"
+    },
+    {
+      "label": "Disease",
+      "name": "Nsclc",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:nsclc"
+    },
+    {
+      "label": "Drug",
+      "name": "Chemotherapy",
+      "drug_class": "",
+      "id": "drug:chemotherapy"
+    },
+    {
+      "label": "Endpoint",
+      "name": "overall survival",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:overall survival"
+    },
+    {
+      "label": "Trial",
+      "pmid": "33285061",
+      "title": "Empagliflozin in Patients with Type 2 Diabetes Mellitus and High Cardiovascular Risk",
+      "sample_size": 7020,
+      "phase": "Phase III Double-blind",
+      "authors": "Zinman B, Wanner C, Lachin JM, et al.",
+      "id": "trial:33285061"
+    },
+    {
+      "label": "Disease",
+      "name": "Type 2 Diabetes Mellitus",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:type 2 diabetes mellitus"
+    },
+    {
+      "label": "Drug",
+      "name": "Empagliflozin",
+      "drug_class": "",
+      "id": "drug:empagliflozin"
+    },
+    {
+      "label": "Trial",
+      "pmid": "31881142",
+      "title": "Donepezil and Memantine Combination in Moderate-to-Severe Alzheimer's Disease",
+      "sample_size": 295,
+      "phase": "Phase III Double-blind",
+      "authors": "Howard R, McShane R, Lindesay J, et al.",
+      "id": "trial:31881142"
+    },
+    {
+      "label": "Disease",
+      "name": "Alzheimer's Disease",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:alzheimer's disease"
+    },
+    {
+      "label": "Drug",
+      "name": "Donepezil",
+      "drug_class": "",
+      "id": "drug:donepezil"
+    },
+    {
+      "label": "Endpoint",
+      "name": "Efficacy & Safety Endpoints",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:efficacy & safety endpoints"
+    },
+    {
+      "label": "Trial",
+      "pmid": "32392437",
+      "title": "Remdesivir for the Treatment of Severe COVID-19 Pneumonia",
+      "sample_size": 1062,
+      "phase": "Phase III Double-blind",
+      "authors": "Beigel JH, Tomashek KM, Dodd LE, et al.",
+      "id": "trial:32392437"
+    },
+    {
+      "label": "Disease",
+      "name": "Covid-19",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:covid-19"
+    },
+    {
+      "label": "Drug",
+      "name": "Remdesivir And 521 to",
+      "drug_class": "",
+      "id": "drug:remdesivir and 521 to"
+    },
+    {
+      "label": "Trial",
+      "pmid": "31697802",
+      "title": "Intensive Blood Pressure Lowering in Adults with Essential Hypertension",
+      "sample_size": 9361,
+      "phase": "Phase III Randomized Controlled Trial",
+      "authors": "Wright JT Jr, Williamson JD, Whelton PK, et al.",
+      "id": "trial:31697802"
+    },
+    {
+      "label": "Disease",
+      "name": "Hypertension And Elevated Cardiovascular Risk",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:hypertension and elevated cardiovascular risk"
+    },
+    {
+      "label": "Drug",
+      "name": "Experimental Medical Intervention",
+      "drug_class": "",
+      "id": "drug:experimental medical intervention"
+    },
+    {
+      "label": "Endpoint",
+      "name": "blood pressure",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:blood pressure"
+    },
+    {
+      "label": "Trial",
+      "pmid": "32970396",
+      "title": "Dapagliflozin in Patients with Chronic Kidney Disease",
+      "sample_size": 304,
+      "phase": "Phase III Randomized Controlled Trial",
+      "authors": "Heerspink HJL, Stef\u00e1nsson BV, Chertow GM, et al.",
+      "id": "trial:32970396"
+    },
+    {
+      "label": "Disease",
+      "name": "Type 2 Diabetes",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:type 2 diabetes"
+    },
+    {
+      "label": "Drug",
+      "name": "Placebo",
+      "drug_class": "",
+      "id": "drug:placebo"
+    },
+    {
+      "label": "Endpoint",
+      "name": "a composite of a sustained decline in eGFR of",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:a composite of a sustained decline in egfr of"
+    },
+    {
+      "label": "Trial",
+      "pmid": "30332560",
+      "title": "Upadacitinib versus Abatacept in Patients with Active Rheumatoid Arthritis",
+      "sample_size": 1629,
+      "phase": "PHASE 3 Double-blind",
+      "authors": "Rubbert-Roth A, Erondu N, Fleishaker D, et al.",
+      "id": "trial:30332560"
+    },
+    {
+      "label": "Disease",
+      "name": "Rheumatoid Arthritis",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:rheumatoid arthritis"
+    },
+    {
+      "label": "Endpoint",
+      "name": "DAS28-CRP clinical remission",
+      "p_value": null,
+      "statistical_significance": "",
+      "id": "endpoint:das28-crp clinical remission"
+    },
+    {
+      "label": "Trial",
+      "pmid": "34345802",
+      "title": "Pembrolizumab for Early Triple-Negative Breast Cancer",
+      "sample_size": 174,
+      "phase": "PHASE III Randomized Controlled Trial",
+      "authors": "Schmid P, Cortes J, Pusztai L, et al.",
+      "id": "trial:34345802"
+    },
+    {
+      "label": "Disease",
+      "name": "Previously Untreated Stage ii or Iii Triple-negative Breast Cancer",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:previously untreated stage ii or iii triple-negative breast cancer"
+    },
+    {
+      "label": "Drug",
+      "name": "Immunotherapy",
+      "drug_class": "",
+      "id": "drug:immunotherapy"
+    },
+    {
+      "label": "Trial",
+      "pmid": "38324483",
+      "title": "Resmetirom Treatment for Non-Alcoholic Steatohepatitis with Liver Fibrosis",
+      "sample_size": 966,
+      "phase": "PHASE 3 Randomized Controlled Trial",
+      "authors": "Harrison SA, Bedossa P, Guy CD, et al.",
+      "id": "trial:38324483"
+    },
+    {
+      "label": "Disease",
+      "name": "Unspecified Clinical Condition",
+      "mesh_id": "",
+      "umls_cui": "",
+      "id": "disease:unspecified clinical condition"
+    }
+  ],
+  "edges": [
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 529,
+      "source": "trial:35657801",
+      "target": "disease:heart failure"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:35657801",
+      "target": "endpoint:os"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:35657801",
+      "target": "cluster:0"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.91,
+      "source": "drug:semaglutide",
+      "target": "disease:heart failure"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 616,
+      "source": "trial:34525287",
+      "target": "disease:nsclc"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:34525287",
+      "target": "endpoint:overall survival"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 92.1,
+      "is_outlier": false,
+      "source": "trial:34525287",
+      "target": "cluster:1"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "CONDITIONAL_POSSIBLE",
+      "confidence": 0.89,
+      "source": "drug:chemotherapy",
+      "target": "disease:nsclc"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 7020,
+      "source": "trial:33285061",
+      "target": "disease:type 2 diabetes mellitus"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:33285061",
+      "target": "endpoint:os"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:33285061",
+      "target": "cluster:0"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.91,
+      "source": "drug:empagliflozin",
+      "target": "disease:type 2 diabetes mellitus"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 295,
+      "source": "trial:31881142",
+      "target": "disease:alzheimer's disease"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:31881142",
+      "target": "endpoint:efficacy & safety endpoints"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:31881142",
+      "target": "cluster:1"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "ABSENT_NEGATED",
+      "confidence": 0.92,
+      "source": "drug:donepezil",
+      "target": "disease:alzheimer's disease"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 1062,
+      "source": "trial:32392437",
+      "target": "disease:covid-19"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:32392437",
+      "target": "endpoint:os"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:32392437",
+      "target": "cluster:1"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.91,
+      "source": "drug:remdesivir and 521 to",
+      "target": "disease:covid-19"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 9361,
+      "source": "trial:31697802",
+      "target": "disease:hypertension and elevated cardiovascular risk"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:31697802",
+      "target": "endpoint:blood pressure"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:31697802",
+      "target": "cluster:0"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.83,
+      "source": "drug:experimental medical intervention",
+      "target": "disease:hypertension and elevated cardiovascular risk"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.83,
+      "source": "drug:experimental medical intervention",
+      "target": "disease:rheumatoid arthritis"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 304,
+      "source": "trial:32970396",
+      "target": "disease:type 2 diabetes"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:32970396",
+      "target": "endpoint:a composite of a sustained decline in egfr of"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 93.7,
+      "is_outlier": false,
+      "source": "trial:32970396",
+      "target": "cluster:0"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.89,
+      "source": "drug:placebo",
+      "target": "disease:type 2 diabetes"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.83,
+      "source": "drug:placebo",
+      "target": "disease:unspecified clinical condition"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 1629,
+      "source": "trial:30332560",
+      "target": "disease:rheumatoid arthritis"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:30332560",
+      "target": "endpoint:das28-crp clinical remission"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 100.0,
+      "is_outlier": false,
+      "source": "trial:30332560",
+      "target": "cluster:1"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 174,
+      "source": "trial:34345802",
+      "target": "disease:previously untreated stage ii or iii triple-negative breast cancer"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:34345802",
+      "target": "endpoint:efficacy & safety endpoints"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 0.0,
+      "is_outlier": true,
+      "source": "trial:34345802",
+      "target": "cluster:-1"
+    },
+    {
+      "type": "TREATS",
+      "assertion": "PRESENT_POSITIVE",
+      "confidence": 0.9,
+      "source": "drug:immunotherapy",
+      "target": "disease:previously untreated stage ii or iii triple-negative breast cancer"
+    },
+    {
+      "type": "TESTED_IN_COHORT",
+      "sample_size": 966,
+      "source": "trial:38324483",
+      "target": "disease:unspecified clinical condition"
+    },
+    {
+      "type": "EVALUATES_ENDPOINT",
+      "outcome": "",
+      "p_value": null,
+      "source": "trial:38324483",
+      "target": "endpoint:os"
+    },
+    {
+      "type": "BELONGS_TO_CLUSTER",
+      "probability": 93.7,
+      "is_outlier": false,
+      "source": "trial:38324483",
+      "target": "cluster:0"
+    }
+  ]
+}
