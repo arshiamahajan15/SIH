@@ -238,7 +238,7 @@ def load_trials_from_sqlite():
 def run_migration():
     """Main migration pipeline."""
     print("=" * 60)
-    print("  MIGRATION: SQLite → BERTopic → Knowledge Graph")
+    print("  MIGRATION: SQLite -> BERTopic -> Knowledge Graph")
     print("  Patent US20250252261A1")
     print("=" * 60)
 
@@ -280,7 +280,7 @@ def run_migration():
         cid = int(cid_str)
         label = "OUTLIERS" if cid == -1 else f"Cluster {cid}"
         keywords = ", ".join(w for w, _ in kw_list[:6])
-        print(f"  [{label}] → {keywords}")
+        print(f"  [{label}] -> {keywords}")
 
     # Demo multi-hop query
     print("\n" + "=" * 60)
@@ -291,7 +291,7 @@ def run_migration():
     for path in query_result["paths"][:8]:
         print(f"    {path['from']} --[{path['relationship']}]--> {path['to']}")
 
-    print("\n✓ Migration complete.")
+    print("\nOK Migration complete.")
     return result
 
 
